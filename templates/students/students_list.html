@@ -1,33 +1,178 @@
-<h2>Studentlar ro'yxati</h2>
-<a href="/students/create/">Yangi student yaratish</a>
+{% extends 'base.html' %}
+{% load static %}
 
-<form method="get">
-    Min age: <input type="number" name="min_age" value="{{ request.GET.min_age }}">
-    Search: <input type="text" name="search" value="{{ request.GET.search }}">
-    <button type="submit">Filter</button>
-</form>
+{% block title %}Studentlar ro'yxati{% endblock %}
 
-<table border="1" cellspacing="0" cellpadding="5">
-    <tr>
-        <th>Full Name</th>
-        <th>Email</th>
-        <th>Age</th>
-        <th>Courses Count</th>
-        <th>Actions</th>
-    </tr>
-    {% for student in students %}
-    <tr>
-        <td>{{ student.full_name }}</td>
-        <td>{{ student.email }}</td>
-        <td>{{ student.age }}</td>
-        <td>{{ student.enrollments.count }}</td>
-        <td>
-            <a href="/students/{{ student.pk }}/">Detail</a> |
-            <form action="/students/{{ student.pk }}/delete/" method="post" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit">Delete</button>
-            </form>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+{% block content %}
+<div class="page-header">
+    <div class="header-content">
+        <div class="header-text">
+            <h1 class="page-title">Barcha Studentlar</h1>
+            <p class="page-subtitle">Tizimga ro'yxatdan o'tgan studentlar ma'lumotlari</p>
+        </div>
+        <a href="{% url 'student_create' %}" class="btn btn-primary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Yangi student qo'shish
+        </a>
+    </div>
+</div>
+
+<div class="filter-bar">
+    <form method="get" class="filter-form">
+        <div class="filter-group">
+            <label class="filter-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                </svg>
+                Qidirish
+            </label>
+            <input 
+                type="text" 
+                name="search" 
+                class="filter-input" 
+                placeholder="Student ismini kiriting..." 
+                value="{{ request.GET.search }}"
+            >
+        </div>
+        
+        <div class="filter-group">
+            <label class="filter-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="4" y1="21" x2="4" y2="14"/>
+                    <line x1="4" y1="10" x2="4" y2="3"/>
+                    <line x1="12" y1="21" x2="12" y2="12"/>
+                    <line x1="12" y1="8" x2="12" y2="3"/>
+                    <line x1="20" y1="21" x2="20" y2="16"/>
+                    <line x1="20" y1="12" x2="20" y2="3"/>
+                </svg>
+                Minimal yosh
+            </label>
+            <input 
+                type="number" 
+                name="min_age" 
+                class="filter-input" 
+                placeholder="Misol: 18" 
+                value="{{ request.GET.min_age }}"
+                min="16"
+            >
+        </div>
+        
+        <div class="filter-actions">
+            <button type="submit" class="btn btn-secondary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                </svg>
+                Filtrlash
+            </button>
+            <a href="{% url 'student_list' %}" class="btn btn-outline">Tozalash</a>
+        </div>
+    </form>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+        </div>
+        <div class="stat-content">
+            <h3 class="stat-value">{{ students|length }}</h3>
+            <p class="stat-label">Jami Studentlar</p>
+        </div>
+    </div>
+</div>
+
+{% if students %}
+<div class="table-wrapper">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Email</th>
+                <th>Yoshi</th>
+                <th>Kurslar</th>
+                <th>Ro'yxatdan o'tgan sana</th>
+                <th class="text-right">Amallar</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr class="table-row">
+                <td>
+                    <div class="user-cell">
+                        <div class="user-avatar">{{ student.full_name|slice:":1"|upper }}</div>
+                        <a href="{% url 'student_detail' student.pk %}" class="user-name">
+                            {{ student.full_name }}
+                        </a>
+                    </div>
+                </td>
+                <td>
+                    <div class="email-cell">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                        {{ student.email }}
+                    </div>
+                </td>
+                <td>
+                    <span class="badge badge-success">{{ student.age }} yosh</span>
+                </td>
+                <td>
+                    <span class="courses-count">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                        </svg>
+                        {{ student.courses_count }} ta kurs
+                    </span>
+                </td>
+                <td class="text-muted">{{ student.created_at|date:"d-m-Y" }}</td>
+                <td>
+                    <div class="table-actions">
+                        <a href="{% url 'student_detail' student.pk %}" class="btn-icon" title="Ko'rish">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </a>
+                        <form method="post" action="{% url 'student_delete' student.pk %}" style="display: inline;" onsubmit="return confirm('Rostdan ham bu studentni o\'chirmoqchimisiz?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-icon btn-danger" title="O'chirish">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"/>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">
+    <div class="empty-icon">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+    </div>
+    <h3 class="empty-title">Hozircha studentlar yo'q</h3>
+    <p class="empty-text">Birinchi studentni qo'shish uchun yuqoridagi tugmani bosing</p>
+    <a href="{% url 'student_create' %}" class="btn btn-primary">Student qo'shish</a>
+</div>
+{% endif %}
+{% endblock %}

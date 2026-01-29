@@ -1,24 +1,188 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{{ course.title }} - Detail</title>
-</head>
-<body>
-    <h1>{{ course.title }}</h1>
-    <p><strong>Davomiylik:</strong> {{ course.duration_weeks }} hafta</p>
-    <p><strong>Description:</strong> {{ course.description }}</p>
+{% extends 'base.html' %}
+{% load static %}
 
-    <h2>Shu kursga yozilgan studentlar</h2>
-    {% if enrollments %}
-        <ul>
-        {% for enrollment in enrollments %}
-            <li>{{ enrollment.student.full_name }} ({{ enrollment.student.email }})</li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>Hozircha studentlar mavjud emas</p>
-    {% endif %}
+{% block title %}{{ course.title }}{% endblock %}
 
-    <p><a href="{% url 'course_list' %}">Ortga qaytish</a></p>
-</body>
-</html>
+{% block content %}
+<div class="page-header">
+    <div class="header-content">
+        <div class="header-text">
+            <h1 class="page-title">{{ course.title }}</h1>
+            <p class="page-subtitle">Kurs tafsilotlari va studentlar ro'yxati</p>
+        </div>
+        <div class="header-actions">
+            <a href="{% url 'course_edit' course.pk %}" class="btn btn-secondary">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+                Tahrirlash
+            </a>
+            <a href="{% url 'course_list' %}" class="btn btn-secondary">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"/>
+                    <polyline points="12 19 5 12 12 5"/>
+                </svg>
+                Orqaga
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="detail-layout">
+    <div class="detail-main">
+        <div class="info-card">
+            <div class="info-header">
+                <div class="info-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                    </svg>
+                </div>
+                <h2 class="info-title">Kurs ma'lumotlari</h2>
+            </div>
+
+            <div class="info-body">
+                <div class="info-row">
+                    <span class="info-label">Kurs nomi:</span>
+                    <span class="info-value">{{ course.title }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Davomiyligi:</span>
+                    <span class="info-value">
+                        <span class="badge badge-primary">{{ course.duration_weeks }} hafta</span>
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Yaratilgan sana:</span>
+                    <span class="info-value">{{ course.created_at|date:"d-m-Y, H:i" }}</span>
+                </div>
+                <div class="info-row full-width">
+                    <span class="info-label">Tavsif:</span>
+                    <p class="info-description">
+                        {% if course.description %}
+                            {{ course.description }}
+                        {% else %}
+                            <em class="text-muted">Tavsif mavjud emas</em>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-header">
+                <div class="info-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <h2 class="info-title">Ro'yxatdan o'tgan studentlar ({{ enrollments|length }})</h2>
+            </div>
+
+            {% if enrollments %}
+            <div class="students-list">
+                {% for enrollment in enrollments %}
+                <div class="student-item">
+                    <div class="student-avatar">
+                        {{ enrollment.student.full_name|slice:":1"|upper }}
+                    </div>
+                    <div class="student-info">
+                        <a href="{% url 'student_detail' enrollment.student.pk %}" class="student-name">
+                            {{ enrollment.student.full_name }}
+                        </a>
+                        <span class="student-meta">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                            {{ enrollment.enrolled_at|date:"d-m-Y" }}
+                        </span>
+                    </div>
+                    <div class="student-badge">
+                        <span class="badge badge-success">{{ enrollment.student.age }} yosh</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state-small">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <p class="empty-text">Bu kursga hali hech kim ro'yxatdan o'tmagan</p>
+                <a href="{% url 'enrollment_create' %}" class="btn btn-primary btn-small">Student qo'shish</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="detail-sidebar">
+        <div class="stats-card">
+            <h3 class="stats-title">Statistika</h3>
+            <div class="stat-item">
+                <div class="stat-icon-small">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="stat-label-small">Studentlar</p>
+                    <p class="stat-value-small">{{ enrollments|length }}</p>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon-small">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="stat-label-small">Davomiyligi</p>
+                    <p class="stat-value-small">{{ course.duration_weeks }} hafta</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions-card">
+            <h3 class="actions-title">Amallar</h3>
+            <a href="{% url 'enrollment_create' %}" class="action-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                Student qo'shish
+            </a>
+            <a href="{% url 'course_edit' course.pk %}" class="action-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+                Tahrirlash
+            </a>
+            <form method="post" action="{% url 'course_delete' course.pk %}" onsubmit="return confirm('Rostdan ham bu kursni o\'chirmoqchimisiz?');">
+                {% csrf_token %}
+                <button type="submit" class="action-btn danger">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                    O'chirish
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

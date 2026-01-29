@@ -1,17 +1,113 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{% if course %}Tahrirlash{% else %}Yangi kurs{% endif %}</title>
-</head>
-<body>
-    <h1>{% if course %}Kursni tahrirlash{% else %}Yangi kurs yaratish{% endif %}</h1>
+{% extends 'base.html' %}
+{% load static %}
 
-    <form method="post">
+{% block title %}{% if course %}Kursni tahrirlash{% else %}Yangi kurs{% endif %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="header-content">
+        <div class="header-text">
+            <h1 class="page-title">{% if course %}Kursni tahrirlash{% else %}Yangi kurs qo'shish{% endif %}</h1>
+            <p class="page-subtitle">Kurs ma'lumotlarini kiriting</p>
+        </div>
+        <a href="{% url 'course_list' %}" class="btn btn-secondary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="19" y1="12" x2="5" y2="12"/>
+                <polyline points="12 19 5 12 12 5"/>
+            </svg>
+            Orqaga
+        </a>
+    </div>
+</div>
+
+<div class="form-wrapper">
+    <form method="post" class="form-card">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Saqlash</button>
+        
+        {% if form.non_field_errors %}
+            <div class="alert alert-error">
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="form-grid">
+            <div class="form-group {% if form.title.errors %}has-error{% endif %}">
+                <label class="form-label" for="{{ form.title.id_for_label }}">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                    Kurs nomi
+                    <span class="required">*</span>
+                </label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                    <span class="error-message">{{ form.title.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group {% if form.duration_weeks.errors %}has-error{% endif %}">
+                <label class="form-label" for="{{ form.duration_weeks.id_for_label }}">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                    Davomiyligi (haftalarda)
+                    <span class="required">*</span>
+                </label>
+                {{ form.duration_weeks }}
+                {% if form.duration_weeks.errors %}
+                    <span class="error-message">{{ form.duration_weeks.errors.0 }}</span>
+                {% endif %}
+                <span class="form-hint">Kurs necha hafta davom etishi</span>
+            </div>
+        </div>
+
+        <div class="form-group {% if form.description.errors %}has-error{% endif %}">
+            <label class="form-label" for="{{ form.description.id_for_label }}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10 9 9 9 8 9"/>
+                </svg>
+                Tavsif
+            </label>
+            {{ form.description }}
+            {% if form.description.errors %}
+                <span class="error-message">{{ form.description.errors.0 }}</span>
+            {% endif %}
+            <span class="form-hint">Kurs haqida qisqacha ma'lumot</span>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-large">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                {% if course %}O'zgarishlarni saqlash{% else %}Kursni yaratish{% endif %}
+            </button>
+            <a href="{% url 'course_list' %}" class="btn btn-secondary btn-large">Bekor qilish</a>
+        </div>
     </form>
 
-    <p><a href="{% url 'course_list' %}">Ortga qaytish</a></p>
-</body>
-</html>
+    <div class="help-card">
+        <div class="help-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+        </div>
+        <h3 class="help-title">Yordam</h3>
+        <ul class="help-list">
+            <li>Kurs nomi aniq va qisqa bo'lishi kerak</li>
+            <li>Davomiylik 0 dan katta bo'lishi shart</li>
+            <li>Tavsif maydonini to'ldirish majburiy emas</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

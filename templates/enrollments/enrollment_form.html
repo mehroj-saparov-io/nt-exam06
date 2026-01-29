@@ -1,9 +1,118 @@
-<h1>Studentni kursga yozish</h1>
+{% extends 'base.html' %}
+{% load static %}
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Yozish</button>
-</form>
+{% block title %}Studentni kursga yozish{% endblock %}
 
-<a href="{% url 'enrollment_list' %}">Enrollments ro'yxati</a>
+{% block content %}
+<div class="page-header">
+    <div class="header-content">
+        <div class="header-text">
+            <h1 class="page-title">Studentni kursga yozish</h1>
+            <p class="page-subtitle">Student va kursni tanlang</p>
+        </div>
+        <a href="{% url 'enrollment_list' %}" class="btn btn-secondary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="19" y1="12" x2="5" y2="12"/>
+                <polyline points="12 19 5 12 12 5"/>
+            </svg>
+            Orqaga
+        </a>
+    </div>
+</div>
+
+<div class="form-wrapper">
+    <form method="post" class="form-card">
+        {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+            <div class="alert alert-error">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="form-grid">
+            <div class="form-group {% if form.student.errors %}has-error{% endif %}">
+                <label class="form-label" for="{{ form.student.id_for_label }}">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    Student
+                    <span class="required">*</span>
+                </label>
+                {{ form.student }}
+                {% if form.student.errors %}
+                    <span class="error-message">{{ form.student.errors.0 }}</span>
+                {% endif %}
+                <span class="form-hint">Ro'yxatga olinadigan studentni tanlang</span>
+            </div>
+
+            <div class="form-group {% if form.course.errors %}has-error{% endif %}">
+                <label class="form-label" for="{{ form.course.id_for_label }}">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                    </svg>
+                    Kurs
+                    <span class="required">*</span>
+                </label>
+                {{ form.course }}
+                {% if form.course.errors %}
+                    <span class="error-message">{{ form.course.errors.0 }}</span>
+                {% endif %}
+                <span class="form-hint">Student yozilishi kerak bo'lgan kursni tanlang</span>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-large">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Ro'yxatga olish
+            </button>
+            <a href="{% url 'enrollment_list' %}" class="btn btn-secondary btn-large">Bekor qilish</a>
+        </div>
+    </form>
+
+    <div class="info-cards-grid">
+        <div class="help-card">
+            <div class="help-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+            </div>
+            <h3 class="help-title">Eslatma</h3>
+            <ul class="help-list">
+                <li>Bitta student bir kursga faqat 1 marta yozilishi mumkin</li>
+                <li>Barcha maydonlar majburiy</li>
+                <li>Ro'yxatga olish sanasi avtomatik saqlanadi</li>
+            </ul>
+        </div>
+
+        <div class="help-card info">
+            <div class="help-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="16" x2="12" y2="12"/>
+                    <line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+            </div>
+            <h3 class="help-title">Qo'shimcha ma'lumot</h3>
+            <ul class="help-list">
+                <li>Student profilidan uning barcha kurslarini ko'rishingiz mumkin</li>
+                <li>Kurs sahifasida ro'yxatga olingan studentlar ro'yxati ko'rsatiladi</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,17 +1,114 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Yangi student</title>
-</head>
-<body>
-    <h1>Yangi student qo'shish</h1>
+{% extends 'base.html' %}
+{% load static %}
 
-    <form method="post">
+{% block title %}Yangi student{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="header-content">
+        <div class="header-text">
+            <h1 class="page-title">Yangi student qo'shish</h1>
+            <p class="page-subtitle">Student ma'lumotlarini kiriting</p>
+        </div>
+        <a href="{% url 'student_list' %}" class="btn btn-secondary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="19" y1="12" x2="5" y2="12"/>
+                <polyline points="12 19 5 12 12 5"/>
+            </svg>
+            Orqaga
+        </a>
+    </div>
+</div>
+
+<div class="form-wrapper">
+    <form method="post" class="form-card">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Saqlash</button>
+        
+        {% if form.non_field_errors %}
+            <div class="alert alert-error">
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="form-grid">
+            <div class="form-group {% if form.full_name.errors %}has-error{% endif %}">
+                <label class="form-label" for="{{ form.full_name.id_for_label }}">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    To'liq ism
+                    <span class="required">*</span>
+                </label>
+                {{ form.full_name }}
+                {% if form.full_name.errors %}
+                    <span class="error-message">{{ form.full_name.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group {% if form.age.errors %}has-error{% endif %}">
+                <label class="form-label" for="{{ form.age.id_for_label }}">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                    Yoshi
+                    <span class="required">*</span>
+                </label>
+                {{ form.age }}
+                {% if form.age.errors %}
+                    <span class="error-message">{{ form.age.errors.0 }}</span>
+                {% endif %}
+                <span class="form-hint">Minimal yosh 16 bo'lishi kerak</span>
+            </div>
+        </div>
+
+        <div class="form-group {% if form.email.errors %}has-error{% endif %}">
+            <label class="form-label" for="{{ form.email.id_for_label }}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                </svg>
+                Email manzil
+                <span class="required">*</span>
+            </label>
+            {{ form.email }}
+            {% if form.email.errors %}
+                <span class="error-message">{{ form.email.errors.0 }}</span>
+            {% endif %}
+            <span class="form-hint">Noyob email manzil kiriting</span>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-large">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Studentni qo'shish
+            </button>
+            <a href="{% url 'student_list' %}" class="btn btn-secondary btn-large">Bekor qilish</a>
+        </div>
     </form>
 
-    <p><a href="{% url 'student_list' %}">Ortga qaytish</a></p>
-</body>
-</html>
+    <div class="help-card">
+        <div class="help-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+        </div>
+        <h3 class="help-title">Eslatma</h3>
+        <ul class="help-list">
+            <li>Barcha maydonlar majburiy</li>
+            <li>Student yoshi kamida 16 bo'lishi kerak</li>
+            <li>Email manzil noyob bo'lishi shart</li>
+            <li>To'liq ism va familiyani kiriting</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
