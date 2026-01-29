@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from django.http import HttpRequest, HttpResponse
 from django.views import View
 from .models import Course
@@ -36,3 +37,27 @@ class CourseDetailView(View):
             'course': course,
             'enrollments': enrollments
         })
+    
+class CourseEditView(View):
+    def get(self, request, pk):
+        course = get_object_or_404(Course, pk=pk)
+        form = CourseForm(instance=course)
+        return render(request, 'courses/course_form.html', {'form': form, 'course': course})
+
+    def post(self, request, pk):
+        course = get_object_or_404(Course, pk=pk)
+        form = CourseForm(request.POST, instance=course)
+        if form.is_valid():
+            form.save()
+            return redirect('course_list')
+        return render(request, 'courses/course_form.html', {'form': form, 'course': course})
+
+class CourseDeleteView(View):
+    def post(self, request, pk):
+        course = get_object_or_404(Course, pk=pk)
+        
+        if course.enrollments.exists():
+            return HttpResponse("Bu kursga studentlar yozilgan. O‘chirish mumkin emas.", status=400)
+        
+        course.delete()
+        return redirect('course_list')

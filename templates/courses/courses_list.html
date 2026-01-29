@@ -6,21 +6,31 @@
 <body>
     <h1>Kurslar ro'yxati</h1>
     <a href="{% url 'course_create' %}">Yangi kurs qo'shish</a>
+
     <table border="1" cellpadding="5" cellspacing="0">
         <tr>
             <th>Nom</th>
             <th>Davomiylik (hafta)</th>
             <th>Studentlar soni</th>
+            <th>Amallar</th>
         </tr>
         {% for course in courses %}
         <tr>
             <td>{{ course.title }}</td>
             <td>{{ course.duration_weeks }}</td>
             <td>{{ course.student_count }}</td>
+            <td>
+                <a href="{% url 'course_detail' course.pk %}">Detail</a> |
+                <a href="{% url 'course_edit' course.pk %}">Edit</a> |
+                <form action="{% url 'course_delete' course.pk %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
         </tr>
         {% empty %}
         <tr>
-            <td colspan="3">Hozircha kurs mavjud emas</td>
+            <td colspan="4">Hozircha kurs mavjud emas</td>
         </tr>
         {% endfor %}
     </table>

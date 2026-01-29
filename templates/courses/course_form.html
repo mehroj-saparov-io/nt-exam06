@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Kurs yaratish</title>
+    <title>{% if course %}Tahrirlash{% else %}Yangi kurs{% endif %}</title>
 </head>
 <body>
-    <h1>Yangi kurs yaratish</h1>
+    <h1>{% if course %}Kursni tahrirlash{% else %}Yangi kurs yaratish{% endif %}</h1>
 
     <form method="post">
         {% csrf_token %}
