@@ -1,8 +1,10 @@
-from django.urls import path, include
+from django.urls import path
 from .views import(
-    GetAllCoursesView
+    GetAllCoursesView,
+    CourseCreateView
 )
 
 urlpatterns = [
-    path('', GetAllCoursesView.as_view(), name='courses')
+    path('', GetAllCoursesView.as_view(), name='course_list'),
+    path('create/', CourseCreateView.as_view(), name='course_create'),
 ]

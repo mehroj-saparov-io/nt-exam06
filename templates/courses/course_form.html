@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kurs yaratish</title>
+</head>
+<body>
+    <h1>Yangi kurs yaratish</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Saqlash</button>
+    </form>
+
+    <p><a href="{% url 'course_list' %}">Ortga qaytish</a></p>
+</body>
+</html>
