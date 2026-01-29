@@ -1,0 +1,17 @@
+<h1>Enrollments ro'yxati</h1>
+<a href="{% url 'enrollment_create' %}">Yangi yozish</a>
+
+<table border="1" cellpadding="5">
+    <tr>
+        <th>Student</th>
+        <th>Course</th>
+        <th>Enrolled at</th>
+    </tr>
+    {% for enrollment in enrollments %}
+    <tr>
+        <td>{{ enrollment.student.full_name }}</td>
+        <td>{{ enrollment.course.title }}</td>
+        <td>{{ enrollment.enrolled_at }}</td>
+    </tr>
+    {% endfor %}
+</table>
