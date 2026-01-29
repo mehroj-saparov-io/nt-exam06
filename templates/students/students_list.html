@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Studentlar ro'yxati</title>
+</head>
+<body>
+    <h1>Studentlar ro'yxati</h1>
+    <a href="{% url 'student_create' %}">Yangi student qo'shish</a>
+
+    <form method="get">
+        <input type="number" name="min_age" placeholder="Min yosh" value="{{ request.GET.min_age }}">
+        <input type="text" name="search" placeholder="Ism bo‘yicha qidirish" value="{{ request.GET.search }}">
+        <button type="submit">Filter</button>
+    </form>
+
+    <table border="1" cellpadding="5" cellspacing="0">
+        <tr>
+            <th>Ism</th>
+            <th>Email</th>
+            <th>Yosh</th>
+            <th>Kurslar soni</th>
+            <th>Amallar</th>
+        </tr>
+        {% for student in students %}
+        <tr>
+            <td>{{ student.full_name }}</td>
+            <td>{{ student.email }}</td>
+            <td>{{ student.age }}</td>
+            <td>{{ student.courses_count }}</td>
+            <td>
+                <a href="{% url 'student_detail' student.pk %}">Detail</a> |
+                <form action="{% url 'student_delete' student.pk %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">Hozircha studentlar mavjud emas</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
