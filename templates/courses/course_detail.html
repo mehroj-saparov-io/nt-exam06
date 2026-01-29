@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ course.title }} - Detail</title>
+</head>
+<body>
+    <h1>{{ course.title }}</h1>
+    <p><strong>Davomiylik:</strong> {{ course.duration_weeks }} hafta</p>
+    <p><strong>Description:</strong> {{ course.description }}</p>
+
+    <h2>Shu kursga yozilgan studentlar</h2>
+    {% if enrollments %}
+        <ul>
+        {% for enrollment in enrollments %}
+            <li>{{ enrollment.student.full_name }} ({{ enrollment.student.email }})</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Hozircha studentlar mavjud emas</p>
+    {% endif %}
+
+    <p><a href="{% url 'course_list' %}">Ortga qaytish</a></p>
+</body>
+</html>

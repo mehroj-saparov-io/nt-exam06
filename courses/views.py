@@ -1,7 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpRequest, HttpResponse
 from django.views import View
 from .models import Course
+from enrollments.models import Enrollment
 from .forms import CourseForm
 
 class GetAllCoursesView(View):
@@ -25,3 +26,13 @@ class CourseCreateView(View):
             return redirect('course_list')
         return render(request, 'courses/course_form.html', {'form': form})
 
+class CourseDetailView(View):
+    def get(self, request, pk):
+        course = get_object_or_404(Course, pk=pk)
+
+        enrollments = course.enrollments.all()
+
+        return render(request, 'courses/course_detail.html', {
+            'course': course,
+            'enrollments': enrollments
+        })
